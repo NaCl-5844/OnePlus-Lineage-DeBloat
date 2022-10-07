@@ -2,7 +2,10 @@
 ADB=/usr/bin/adb
 myDir="$(readlink -f "$0")"
 myDir=${myDir%"$0"} #removes "$0" from end(%) of myDir
-# echo "${myDir}BloatUninstall.sh"
+# echo "${myDir}"
+# Uninstall apps: adb shell pm uninstall --user 0 <package name>
+# Reinstall app: cmd package install-existing --user 0 <package name>
+# Disable app: adb shell pm disable-user <package name>
 
 finished () {
 echo "Finished!"
@@ -10,21 +13,25 @@ exit 0
 }
 
 confirm_uninstall () {
-echo -e "Files to be uninstalled:\n"
-echo "$(<AndroidLineage_UninstallList)"
-echo -e "\nConfirm[nyse]:"
+echo -e "\nFiles to be uninstalled:\n"
+echo "$(<UninstallList.txt)"
+echo -e "\nConfirm[nye]:"
 read AnswerU
 case $AnswerU in
     n)
-        echo -e "\nexit 1"
-        exit 0 ;;
+        echo -e "\nSkipping..."
+        confirm_disable ;;
     y)
-        source "${myDir}BloatUninstall.sh" ;;
-    s)
-        echo "\nSkipping..."
+        input="${myDir}UninstallList.txt"
+        "$ADB" shell "echo Proceeding with batch uninstall..."
+        while read -r line
+        do
+            echo "Uninstalling: $line"
+            "$ADB" shell -n pm uninstall --user 0 "$line"
+        done < $input
         confirm_disable ;;
     e)
-        exit 0;;
+        exit 0 ;;
     *)
         echo -e "\nError: Incorrect character(s)"
         confirm_uninstall ;;
@@ -32,22 +39,24 @@ esac
 }
 
 confirm_disable () {
-echo -e "Files to be disabled:\n"
-echo "$(<AndroidLineage_DisableList)"
-echo -e "\nConfirm[nyse]:"
+echo -e "\nFiles to be disabled:\n"
+echo "$(<DisableList.txt)"
+echo -e "\nConfirm[nye]:"
 read AnswerD
 case $AnswerD in
     n)
-        echo -e "\nexit 1"
+        echo -e "\nNothing left to do\nExiting..."
         exit 0 ;;
     y)
-        source "${myDir}BloatDisable.sh"
+        input="${myDir}DisableList.txt"
+        "$ADB" shell "echo Proceeding with batch disable..."
+        while read -r line
+        do
+            "$ADB" shell -n pm disable-user "$line"
+        done < $input
         finished ;;
-    s)
-        echo -e "\nNothing left to do\nExiting..."
-        exit 0;;
     e)
-        exit 0;;
+        exit 0 ;;
     *)
         echo -e "\nError: Incorrect character(s)"
         confirm_disable ;;
