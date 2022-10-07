@@ -1,9 +1,0 @@
-package:com.android.printspooler
-package:com.android.bluetooth
-package:com.android.bluetoothmidiservice
-package:com.android.mms.service
-package:com.android.printservice.recommendation
-package:com.android.wallpaper.livepicker
-package:com.android.statementservice
-package:com.android.traceur
-package:com.android.nfc
