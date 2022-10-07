@@ -1,9 +1,0 @@
-com.android.printspooler
-com.android.bluetooth
-com.android.bluetoothmidiservice
-com.android.mms.service
-com.android.printservice.recommendation
-com.android.wallpaper.livepicker
-com.android.statementservice
-com.android.traceur
-com.android.nfc
